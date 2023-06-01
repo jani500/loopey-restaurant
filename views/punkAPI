@@ -1,0 +1,18 @@
+const punkAPI = require("punkAPI");
+
+
+app.get("/beers". (req, res, next) => {
+
+    punkAPI.getBeers()
+    .then( (beersArr) => {
+
+
+        const data = {
+            listOfBeers: beersArr
+        }
+
+        res.render("beer-list", data);
+
+    })
+
+})
