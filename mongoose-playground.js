@@ -1,10 +1,7 @@
-const { mongoose, Schema } = require("mongoose");
+const mongoose = require("mongoose");
 
-// create Schema
-const pizzaSchema = new Schema({ title: String });
-
-// Create Model
-const Pizza = mongoose.model("Pizza", pizzaSchema);
+// we are taking the exported Pizza model and storing it in a variable here so we can use it later
+const Pizza = require("./models/Pizza.model");
 
 // this connect method returns a promise
 mongoose
@@ -20,6 +17,8 @@ mongoose
 
     const pizzaOne = {
       title: "margarita",
+      price: 12,
+      isVeggie: true,
     };
 
     // this is an async operation & returns a promise
@@ -32,10 +31,28 @@ mongoose
     // this is the Model.find() method which returns all docs in a collection as an array
     // everytime a method returns a promise, we can chain this with .then if we return a promise..
     return Pizza.find();
+
+    // we can also chain this with a query, e.g. Pizza.find({title: "margarita"})
   })
 
   // we take the result of the previous function and assign it to pizzasArr
   .then((pizzasArr) => {
     console.log("I currently have...", pizzasArr.length);
+
+    // mongoose returns the original document, and not the updated one, unless ou pass thr third argument
+    return Pizza.findByIdAndUpdate(
+      "//inserObjIDHere",
+      { price: 20 },
+      { returnDocument: "after" }
+    );
   })
-  .catch((err) => console.error("Error connecting to Mongo", err));
+
+  .then((updatedPizzaFromDB) => {
+    console.log("Jani, your pizza was updated.");
+    console.log(updatedPizzaFromDB);
+  });
+
+console.error("Error connecting to Mongo", err);
+
+// for all pizzas with price > 12, set a specific "dough"
+//Pizza.updateMany({ price: { $gt: 12 } }, { dough: "classic" }).catch((err) =>
